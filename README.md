@@ -4,6 +4,8 @@
 
 A set of specialized knowledge, rules, and tools to accelerate **Rewrite** integrations through **AI agents** and SMS automation.
 
+<img src="https://cdn.rewritetoday.com/assets/banners/ai.png" width="100%" alt="Rewrite"/>
+
 ## What are SKILLS?
 
 Skills are specialized context packages that teach **AI agents** (such as **Cursor**, **Claude Code**, and other assistants) and developers about best practices, business rules, and technical standards in the Rewrite ecosystem.
