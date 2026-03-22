@@ -13,11 +13,12 @@ Each action must define:
 
 ## Execution Pattern
 
-1. Validate structured arguments.
-2. Re-check policy with current context.
-3. Execute allowlisted action only.
-4. Store result and policy trace.
-5. Return minimal user-facing summary.
+1. Validate the external event or message at the boundary.
+2. Validate structured action arguments.
+3. Re-check policy with the latest application context.
+4. Execute allowlisted actions only.
+5. Store the result and policy trace.
+6. Return or send a minimal user-facing summary through the outbound SMS flow.
 
 ## Deny-By-Default
 
@@ -25,3 +26,4 @@ Each action must define:
 - Reject unknown actions.
 - Reject malformed arguments.
 - Reject actions with missing verification context.
+- Reject actions that assume Rewrite itself is the source of truth for user permissions.

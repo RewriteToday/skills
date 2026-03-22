@@ -2,11 +2,12 @@
 
 ## Primary Threats
 
-- Prompt injection embedded in user SMS
+- Prompt injection embedded in user-authored messages
 - Social engineering for privileged operations
 - Data exfiltration through unconstrained tool calls
-- Replay abuse using repeated inbound events
-- User impersonation through weak identity checks
+- Replay or duplicate execution caused by repeated Rewrite webhook events
+- User impersonation through weak identity checks in the application layer
+- Over-trusting Rewrite transport metadata as if it were end-user identity proof
 
 ## Threat Controls
 
@@ -15,3 +16,4 @@
 - Gate side effects behind policy and identity verification.
 - Bind high-risk actions to explicit user confirmation tokens.
 - Log all tool invocations with actor, reason, and policy decision.
+- Keep webhook verification, payload validation, and user authorization as three separate checks.
