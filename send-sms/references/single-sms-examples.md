@@ -5,62 +5,59 @@ Use these examples as implementation templates.
 ## Node SDK Pattern
 
 ```ts
-import { Rewrite } from "@rewritejs/sdk";
+import { Rewrite } from '@rewritetoday/sdk';
 
-const client = new Rewrite(process.env.REWRITE_API_KEY);
+const rewrite = new Rewrite(process.env.REWRITE_API_KEY!);
 
 export async function sendVerificationSms(to: string, code: string) {
-  const idempotencyKey = `verify:${to}:${code}`;
+	const { data, error } = await rewrite.messages.send({
+		to,
+		content: `Rewrite: your verification code is ${code}`,
+		tags: [{ name: 'flow', value: 'login' }],
+		idempotencyKey: `msg:verify:${to}:${code}`,
+	});
 
-  const result = await client.messages.send(
-    {
-      to,
-      idempotencyKey,
-      message: `Your code is ${code}`,
-      tags: { purpose: "verification" },
-    },
-  );
+	if (error) throw error;
 
-  return {
-    messageId: result.id,
-    providerState: result.status,
-  };
+	return data;
 }
 ```
 
-## Go SDK Pattern
+The accepted response carries the Rewrite message ID and `analysis` payload; persist both.
 
-```go
-func SendVerificationSMS(client *rewrite.Client, to string, code string) (*rewrite.Message, error) {
-    idempotencyKey := fmt.Sprintf("verify:%s:%s", to, code)
+## Template Send Pattern
 
-    msg, err := client.Messages.Send(context.Background(), rewrite.SendMessageRequest{
-        To:   to,
-        IdempotencyKey: idempotencyKey,,
-        Text: fmt.Sprintf("Your code is %s", code),
-        Tags: map[string]string{"purpose": "verification"},
-    })
-    
-    if err != nil {
-        return nil, err
-    }
+```ts
+const { data, error } = await rewrite.messages.send({
+  to: '+5511888888888',
+  templateId: '748395130237498620',
+  variables: {
+    code: '941205',
+    name: 'Fernanda',
+  },
+  tags: [{ name: 'flow', value: 'login' }],
+  idempotencyKey: 'msg:template:login:941205',
+});
 
-    return msg, nil
-}
+if (error) throw error;
 ```
 
 ## REST Pattern
 
 ```bash
-curl -X POST "$REWRITE_BASE_URL/messages" \
-  -H "Authorization: Bearer $REWRITE_API_KEY" \
+curl -X POST "https://api.rewritetoday.com/v1/messages" \
+  -H "Authorization: Bearer rw_..." \
   -H "Content-Type: application/json" \
-  -H "Idempotency-Key: verify:+15551234567:123456" \
+  -H "Idempotency-Key: msg:verify:+5511999999999:123456" \
   -d '{
-    "to": "+15551234567",
-    "message": "Your code is 123456",
-    "tags": { "purpose": "verification" }
+    "to": "+5511999999999",
+    "content": "Rewrite: your verification code is 123456",
+    "tags": [
+      { "name": "flow", "value": "login" }
+    ]
   }'
 ```
 
-If your SDK version uses different method names, keep the same call structure and semantics: payload + idempotency + response mapping.
+## Go Note
+
+The public docs already show `Messages.Send(...)` examples for Go, but the public `main` repository currently does not expose a `Messages` resource in the visible client source. If your installed Go SDK version does not provide message helpers yet, call the same public REST contract from Go and keep the request body identical to the examples above.

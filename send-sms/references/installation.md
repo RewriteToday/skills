@@ -1,32 +1,34 @@
-# Rewrite SDK And Package Setup
+# Rewrite SDK, REST, And CLI Setup
 
-Use one of the following integration paths.
+Use one of the official integration paths below.
 
-## Canonical Rewrite Repositories
+## Official Rewrite Repositories
 
 - Node SDK: `https://github.com/rewritetoday/node`
 - Go SDK: `https://github.com/rewritetoday/golang`
-- REST API: `https://github.com/rewritetoday/rest`
+- CLI: `https://github.com/rewritetoday/cli`
+- REST client: `https://github.com/rewritetoday/rest`
 - Types package: `https://github.com/rewritetoday/types`
+- Zod package: `https://github.com/rewritetoday/zod`
+- Docs source: `https://github.com/rewritetoday/docs`
 
-## Node SDK + Types
+## Node SDK
 
 ```bash
-npm install @rewritejs/sdk @rewritejs/types
+npm install @rewritetoday/sdk
+# or
+pnpm add @rewritetoday/sdk
+# or
+bun install @rewritetoday/sdk
 ```
 
 ```ts
-// Template setup; confirm exact client constructor in the current SDK version.
-import { Rewrite } from "@rewritejs/sdk";
-import type { APIPostSendMessageBody } from "@rewritejs/types";
+import { Rewrite } from '@rewritetoday/sdk';
 
-const client = new Rewrite(process.env.REWRITE_API_KEY);
-
-const payload: APIPostSendMessageBody = {
-  to: "+15551234567",
-  message: "Your verification code is 123456",
-};
+const rewrite = new Rewrite(process.env.REWRITE_API_KEY!);
 ```
+
+Use this as the default SDK path for outbound messaging.
 
 ## Go SDK
 
@@ -35,41 +37,47 @@ go get github.com/rewritetoday/golang
 ```
 
 ```go
-// Template setup; confirm exact package path and constructor in the current SDK version.
 package main
 
 import (
-    "os"
-
-    rewrite "github.com/rewritetoday/golang"
+	rewrite "github.com/rewritetoday/golang"
 )
 
-func newClient() *rewrite.Client {
-    return rewrite.NewClient(os.Getenv("REWRITE_API_KEY"))
+func newClient(secret string) (*rewrite.Client, error) {
+	return rewrite.New(secret)
 }
 ```
 
-## REST API
+The public docs already show message-send examples for Go, but the current `main` GitHub repository visibly exposes `APIKeys`, `Templates`, and `Webhooks` on the client. Check the installed version before assuming `Messages` helpers are available; if not, use the public REST API from Go.
 
-Use REST for any runtime or service that does not use a native SDK.
-Use endpoint shape and auth details from `https://github.com/rewritetoday/rest`.
-
-```bash
-curl -X POST "$REWRITE_BASE_URL/messages" \
-  -H "Authorization: Bearer $REWRITE_API_KEY" \
-  -H "Content-Type: application/json" \
-  -H "Idempotency-Key: 2c6af9f4-5c06-4f4a-9ede-c1f8d3a24f56" \
-  -d '{
-    "to": "+15551234567",
-    "message": "Your verification code is 123456"
-  }'
-```
-
-## Environment Variables
+## Low-Level JS/TS Stack
 
 ```bash
-REWRITE_API_KEY=...
-REWRITE_WEBHOOK_SECRET=...
+npm install @rewritetoday/rest @rewritetoday/types @rewritetoday/zod zod
 ```
 
-Keep secrets in a dedicated secret manager and rotate keys periodically.
+Use this stack when you need explicit HTTP control, route builders, or runtime validation at the boundary.
+
+## CLI
+
+```bash
+go install github.com/rewritetoday/cli@latest
+# or
+brew install rewrite-cli
+```
+
+```bash
+rewrite --version
+rewrite login
+```
+
+The CLI is useful for local testing, webhook forwarding, quick sends, and inspection.
+
+## Required Environment Variables
+
+```bash
+REWRITE_API_KEY=rw_...
+REWRITE_WEBHOOK_SECRET=whsec_...
+```
+
+Keep Rewrite secrets server-side only and rotate them through your secret manager.
