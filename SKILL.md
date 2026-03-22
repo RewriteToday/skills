@@ -1,6 +1,6 @@
 ---
 name: rewrite
-description: Rewrite platform router for API, SDK, CLI, webhooks, templates, and AI workflows. Use when Codex needs to send SMS, handle Rewrite webhook events, work with official Rewrite SDKs/packages, or build application-owned agent flows on top of Rewrite.
+description: Rewrite platform router for API, SDK, CLI, webhooks, templates, and AI workflows. Use when the agent needs to send SMS, handle Rewrite webhook events, work with official Rewrite SDKs/packages, or build application-owned agent flows on top of Rewrite.
 ---
 
 # Rewrite
@@ -9,6 +9,7 @@ Use this skill as the entry point for Rewrite work and route to the focused sub-
 
 ## Route To The Right Sub-skill
 
+- Use `sms-best-practices/` when the user wants general SMS architecture guidance, deliverability guardrails, rollout strategy, or a best-practices checklist with Rewrite.
 - Use `send-sms/` for `POST /messages`, `/messages/batch`, templates, idempotency, delivery tracking, and outbound SMS workflows.
 - Use `rewrite-inbound/` for Rewrite webhook ingestion into your app: signature verification, event parsing, dedupe, retries, delivery logs, and downstream routing.
 - Use `agent-sms-inbox/` for application-owned SMS agents that consume Rewrite events and send replies through Rewrite under strict policy controls.

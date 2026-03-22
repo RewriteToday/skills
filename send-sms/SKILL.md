@@ -1,6 +1,6 @@
 ---
 name: send-sms
-description: Production SMS delivery workflow for Rewrite. Use when Codex needs to send transactional or campaign SMS, implement batching, enforce idempotency, use templates and scheduling, and integrate the official Rewrite SDKs, REST client, CLI, or ecosystem packages.
+description: Production SMS delivery workflow for Rewrite. Use when the agent needs to send transactional or campaign SMS, implement batching, enforce idempotency, use templates and scheduling, and integrate the official Rewrite SDKs, REST client, CLI, or ecosystem packages.
 ---
 
 # Send SMS With Rewrite

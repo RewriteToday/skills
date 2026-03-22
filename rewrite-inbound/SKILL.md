@@ -1,6 +1,6 @@
 ---
 name: rewrite-inbound
-description: Rewrite webhook ingestion workflow for your application. Use when Codex needs to configure Rewrite webhooks, verify signatures, parse and normalize event payloads, handle retries and dedupe, inspect delivery logs, and route delivery or OTP events safely.
+description: Rewrite webhook ingestion workflow for your application. Use when the agent needs to configure Rewrite webhooks, verify signatures, parse and normalize event payloads, handle retries and dedupe, inspect delivery logs, and route delivery or OTP events safely.
 ---
 
 # Rewrite Webhook Intake

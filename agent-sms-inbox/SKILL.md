@@ -1,6 +1,6 @@
 ---
 name: agent-sms-inbox
-description: Secure application-owned SMS agent workflow built on Rewrite outbound sends and Rewrite webhook events. Use when Codex needs to turn app-owned conversation inputs into LLM-driven replies while preventing prompt injection, enforcing action policies, gating risky operations, and escalating uncertain cases safely.
+description: Secure application-owned SMS agent workflow built on Rewrite outbound sends and Rewrite webhook events. Use when the agent needs to turn app-owned conversation inputs into LLM-driven replies while preventing prompt injection, enforcing action policies, gating risky operations, and escalating uncertain cases safely.
 ---
 
 # Agent SMS Inbox Security

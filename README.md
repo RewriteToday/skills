@@ -30,6 +30,7 @@ These skills are primarily consumed by **IDEs** and **AI agents** that support l
 The structure is organized by domain for easier discovery and execution:
 
 [**`SKILL.md`**](./SKILL.md) — Main Rewrite skill router.<br/>
+[**`sms-best-practices/`**](./sms-best-practices) — General SMS architecture, deliverability, retry, observability, and rollout guidance for Rewrite-based systems.<br/>
 [**`send-sms/`**](./send-sms) — Outbound sending, idempotency, templates, batching, and delivery lifecycle.<br/>
 [**`rewrite-inbound/`**](./rewrite-inbound) — Rewrite webhook intake, signature verification, payload normalization, and delivery-log debugging.<br/>
 [**`agent-sms-inbox/`**](./agent-sms-inbox) — Secure application-owned SMS agent patterns with anti prompt-injection policies.
