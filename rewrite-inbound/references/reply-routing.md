@@ -1,24 +1,25 @@
-# Reply Routing
+# Event Routing And Downstream Actions
 
-Use deterministic routing before autonomous generation.
+Route Rewrite webhook events to stable internal handlers before any business action.
 
-## Routing Layers
+## Suggested Routing Layers
 
-1. System commands (STOP, HELP, START)
-2. Security and abuse checks
-3. Active workflow handlers (verification, support, notifications)
-4. AI-agent fallback
-5. Human escalation
+1. Audit and persistence for every accepted webhook event
+2. Lifecycle updates for `message.queued`, `message.sent`, `message.scheduled`, `message.canceled`
+3. Failure remediation for `message.failed`
+4. Batch reconciliation for `message.batch`
+5. OTP-specific handling for `sms.otp`
+6. Optional application-owned agent or workflow triggers
 
-## Reply Rules
+## Routing Rules
 
-- Keep replies short and explicit.
-- Include stable identifiers for user-facing workflows when useful.
-- Avoid sending sensitive data in clear text.
-- Respect quiet-hour and opt-out constraints.
+- Drive business logic from webhook events, not only from the initial send response.
+- Keep `message.delivered` optional until the event is generally available.
+- Treat `message.batch` as a summary, not as proof that every request item succeeded.
+- Route OTP success and OTP failure differently: success is `sms.otp`, failure is `message.failed`.
 
 ## Failure Strategy
 
-- If routing fails, send a safe fallback reply.
-- Emit alertable logs for repeated route failures.
-- Escalate to human queue on confidence or policy failures.
+- If routing fails after verification, store the raw payload and retry internally.
+- Use Rewrite delivery logs to inspect what was actually delivered and returned by your endpoint.
+- Escalate repeated handler failures to an operator queue before the webhook keeps failing every attempt.
