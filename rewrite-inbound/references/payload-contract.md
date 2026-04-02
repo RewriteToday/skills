@@ -24,11 +24,13 @@ Every public Rewrite webhook event uses the same top-level envelope:
 
 ## Message-Like Event Shape
 
-For `sms.otp`, `message.sent`, `message.queued`, `message.failed`, `message.canceled`, and `message.scheduled`, `data` contains a message-shaped payload with fields such as:
+For `sms.otp`, `message.sent`, `message.queued`, `message.failed`, `message.canceled`, `message.scheduled`, and `message.delivered`, `data` contains a message-shaped payload with fields such as:
 
 - `id`
 - `projectId`
 - `to`
+- `contact`
+- `contactId`
 - `tags`
 - `type`
 - `status`
@@ -61,16 +63,25 @@ For `message.batch`, `data` contains:
   "batchId": null,
   "status": "SENT",
   "to": "+5511999999999",
+  "contact": "Ada",
+  "contactId": "748395130237498455",
   "tags": [
     { "name": "flow", "value": "login" }
   ],
   "analysis": {
     "encoding": "gsm7",
     "characters": 41,
-    "segments": 1
+    "segments": {
+      "count": 1,
+      "single": 160,
+      "concat": 153,
+      "reason": "fits"
+    }
   },
   "raw": {}
 }
 ```
+
+`contact` and `contactId` are nullable and help correlate delivery events with Rewrite audience records.
 
 Keep both normalized and raw payloads for troubleshooting, replay, and log correlation.

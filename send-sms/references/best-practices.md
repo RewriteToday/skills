@@ -2,11 +2,20 @@
 
 ## Delivery And Content
 
-- Public sends currently target Brazilian `+55` numbers only.
+- Public sends currently target Brazilian `+55` numbers unless the project has international sending enabled.
+- Prefer `contact` for reusable recipients and raw `to` for one-off or bootstrap sends.
+- Sending with `to` still ensures a Rewrite contact exists for that phone number.
 - Keep OTP and transactional content short to avoid unnecessary segmentation.
 - Put brand context near the start of the message body.
 - Prefer templates when the same flow is reused across sends.
 - Keep template variable names stable across every locale variant.
+
+## Audience Modeling
+
+- Use `/contacts` for reusable recipients, stable names, channel metadata, and per-contact JSON `tags`.
+- Use `/segments` and `/segments/:id/contacts` for audience grouping only; actual dispatch still goes through `/messages` or `/messages/batch`.
+- Keep contact names unique per project if your app will target messages by contact name.
+- Distinguish contact `tags` from message `tags`: contact tags are a JSON object, message tags are an array of `{ name, value }`.
 
 ## Reliability And Limits
 
@@ -22,6 +31,8 @@
 Store at minimum:
 
 - Rewrite message ID
+- request target reference: `to` or `contact`
+- resolved Rewrite contact ID when available
 - destination number
 - business context tags
 - idempotency key

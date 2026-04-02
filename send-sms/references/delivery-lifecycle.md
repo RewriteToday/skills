@@ -6,7 +6,7 @@ Treat delivery as an asynchronous state machine driven by webhooks.
 
 Typical flow:
 
-1. `POST /messages` returns an accepted Rewrite message ID immediately.
+1. `POST /messages` returns an accepted Rewrite message ID immediately, whether the target was `to` or `contact`.
 2. `message.queued` is emitted once Rewrite persists the immediate SMS for dispatch.
 3. `message.sent` is emitted when the provider accepts the SMS.
 4. `message.failed` is emitted if Rewrite cannot complete the send.
@@ -36,6 +36,7 @@ Typical flow:
 
 1. Never assume finality from the initial send response.
 2. Persist the accepted ID and correlate later webhook events with it.
-3. Allow out-of-order webhook events and keep deterministic internal transitions.
-4. Make webhook handlers idempotent and preserve the full event history.
-5. Use `GET /messages/{id}` for point-in-time inspection, not as a replacement for webhook processing.
+3. Use webhook `contact` and `contactId` fields when you need to correlate delivery activity back to Rewrite audience records.
+4. Allow out-of-order webhook events and keep deterministic internal transitions.
+5. Make webhook handlers idempotent and preserve the full event history.
+6. Use `GET /messages/{id}` for point-in-time inspection, not as a replacement for webhook processing.

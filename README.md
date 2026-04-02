@@ -13,7 +13,7 @@ Skills are specialized context packages that teach **AI agents** (such as **Curs
 ## What are they for?
 
 <strong>Precise Context:</strong> Provide practical information about Rewrite APIs, SDKs, Webhooks, CLI, and ecosystem packages.<br/>
-<strong>Standardization:</strong> Ensure generated code follows consistent conventions for SMS sending, webhook intake, and agent-safe workflows.<br/>
+<strong>Standardization:</strong> Ensure generated code follows consistent conventions for SMS sending, contacts and segments, webhook intake, and agent-safe workflows.<br/>
 <strong>Acceleration:</strong> Reduce implementation time with production-ready workflows and checklists.<br/>
 <strong>Practical Examples:</strong> Offer clear reference patterns for Node.js, Go, REST, Types, and Zod.
 
@@ -31,7 +31,7 @@ The structure is organized by domain for easier discovery and execution:
 
 [**`SKILL.md`**](./SKILL.md) — Main Rewrite skill router.<br/>
 [**`sms-best-practices/`**](./sms-best-practices) — General SMS architecture, deliverability, retry, observability, and rollout guidance for Rewrite-based systems.<br/>
-[**`send-sms/`**](./send-sms) — Outbound sending, idempotency, templates, batching, and delivery lifecycle.<br/>
+[**`send-sms/`**](./send-sms) — Outbound sending, contacts, segments, idempotency, templates, batching, and delivery lifecycle.<br/>
 [**`rewrite-inbound/`**](./rewrite-inbound) — Rewrite webhook intake, signature verification, payload normalization, and delivery-log debugging.<br/>
 [**`agent-sms-inbox/`**](./agent-sms-inbox) — Secure application-owned SMS agent patterns with anti prompt-injection policies.
 

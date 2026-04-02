@@ -25,6 +25,7 @@ Implement Rewrite webhook ingestion with security and reliability controls.
 - Expect at-least-once delivery and 5 total retry attempts on failure.
 - Store raw payload and normalized event representation.
 - Prevent duplicate processing with webhook-event dedupe keys.
+- Treat Rewrite `contactId` as transport metadata that helps correlation, not as your app's canonical user identity.
 - Do not model this as end-user inbound SMS unless your application provides that layer itself.
 
 ## Resource Map
@@ -44,6 +45,7 @@ Produce a normalized object with:
 - event type
 - Rewrite message ID or batch ID
 - project ID
+- Rewrite `contact` and `contactId`, when present
 - current message status, when applicable
 - acceptance or delivery timestamps, when applicable
 - raw payload storage location

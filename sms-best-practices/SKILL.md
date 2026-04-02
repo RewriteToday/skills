@@ -1,6 +1,6 @@
 ---
 name: sms-best-practices
-description: General SMS best-practices guide for Rewrite-based systems. Use when the agent needs to define SMS architecture, deliverability, templates, retries, observability, webhook handling, or rollout guardrails before or alongside implementation.
+description: General SMS best-practices guide for Rewrite-based systems. Use when the agent needs to define SMS architecture, contacts and segments strategy, deliverability, templates, retries, observability, webhook handling, or rollout guardrails before or alongside implementation.
 ---
 
 # SMS Best Practices With Rewrite
@@ -9,18 +9,22 @@ Use this skill when the user wants guidance, standards, or a checklist for build
 
 If the task is implementation-heavy, pair this skill with:
 
-- `send-sms/` for outbound send code and delivery lifecycle work
+- `send-sms/` for outbound send code, contacts, segments, and delivery lifecycle work
 - `rewrite-inbound/` for Rewrite webhook intake and event processing
 - `agent-sms-inbox/` for application-owned SMS agents
 
 ## Rewrite Reality Check
 
 - Public Rewrite API v1 base URL: `https://api.rewritetoday.com/v1`
-- Public sends currently target Brazilian `+55` numbers
-- Inline sends use `content`
-- Template sends use `templateId` plus `variables`
+- Public audience resources live at `/contacts` and `/segments`
+- Public sends currently target Brazilian `+55` numbers unless the project has international sending enabled
+- Message sends accept `to` or `contact`
+- `contact` resolves by contact ID or exact contact name
+- Sending to `to` also ensures a Rewrite contact exists for that phone number
+- Templates use `templateId` plus `variables`
 - Write operations should carry `Idempotency-Key`
 - Delivery is asynchronous and webhook-driven
+- Segments are audience containers, not a direct broadcast endpoint
 - `message.delivered` exists in the public contract but is currently WIP
 
 ## Default Guidance
@@ -41,6 +45,13 @@ If the task is implementation-heavy, pair this skill with:
 - Prefer explicit, low-ambiguity wording over marketing-heavy copy.
 - Watch segmentation counts and encoding because they affect cost and delivery behavior.
 - Use `tags` to encode stable business context like `flow`, `campaign`, or `use_case`.
+
+## Audience Strategy
+
+- Model reusable recipients as Rewrite contacts instead of duplicating recipient metadata across message payloads.
+- Keep contact names unique per project if you plan to address contacts by name in `/messages`.
+- Use segments for audience reuse and campaign assembly, then fan out the segment contacts through `/messages` or `/messages/batch`.
+- Treat Rewrite contact tags and your app's business state separately unless you intentionally mirror them.
 
 ## Templates And Localization
 
@@ -85,12 +96,14 @@ Persist or emit at minimum:
 - Small apps: official SDK plus one database table plus one webhook worker
 - Service-oriented stacks: `@rewritetoday/rest` plus `@rewritetoday/types` or `@rewritetoday/zod`
 - High volume flows: queue-backed fan-out, controlled concurrency, dead-letter handling
+- Audience-heavy flows: Rewrite contacts plus segments for recipient modeling, then queue-backed batch orchestration
 - Critical OTP flows: isolate traffic, rate limit aggressively, and keep content minimal
 
 ## Batch Strategy
 
 - Use `POST /messages/batch` only for bounded chunks
 - Current public contract accepts 1 to 100 messages per batch request
+- Resolve segment members first; there is no direct `/segments/:id/send` public route
 - Treat `message.batch` as a summary event, not a replacement for per-message tracking
 - If every batch item fails, no `message.batch` event is emitted
 

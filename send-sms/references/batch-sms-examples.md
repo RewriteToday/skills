@@ -5,17 +5,18 @@ Use batch flows when one request needs to accept many outbound SMS messages at o
 ## Contract Constraints
 
 - `POST /messages/batch` accepts between 1 and 100 items.
-- Each item uses the same body shape as a single message.
+- Each item uses the same body shape as a single message and may target either `to` or `contact`.
 - Attach `Idempotency-Key` at the request level.
 - The accepted response returns only the accepted Rewrite message IDs.
 
 ## Preferred Production Pattern
 
 1. Store campaign metadata and target set in your database.
-2. Chunk recipients to bounded jobs.
-3. Push jobs to a queue with retry and dead-letter support.
-4. Use batch requests only for bounded chunks that still fit the 1..100 contract.
-5. Track per-message state from accepted IDs plus webhook events.
+2. If the campaign targets a Rewrite segment, materialize recipients from `GET /segments/:id/contacts`.
+3. Chunk recipients to bounded jobs.
+4. Push jobs to a queue with retry and dead-letter support.
+5. Use batch requests only for bounded chunks that still fit the 1..100 contract.
+6. Track per-message state from accepted IDs plus webhook events.
 
 ## Node Worker Example
 
@@ -24,9 +25,12 @@ import { Rewrite } from '@rewritetoday/sdk';
 
 const rewrite = new Rewrite(process.env.REWRITE_API_KEY!);
 
-export async function processCampaignChunk(campaignId: string, recipients: string[]) {
-	const body = recipients.map((to) => ({
-		to,
+export async function processCampaignChunk(
+	campaignId: string,
+	contactIds: string[],
+) {
+	const body = contactIds.map((contact) => ({
+		contact,
 		content: 'Rewrite: flash sale, 20% off today only',
 		tags: [{ name: 'campaign', value: campaignId }],
 	}));
@@ -41,6 +45,8 @@ export async function processCampaignChunk(campaignId: string, recipients: strin
 }
 ```
 
+If you manage audiences with Rewrite segments, resolve the segment membership first and feed the returned contact IDs into the batch worker.
+
 ## REST Example
 
 ```bash
@@ -50,7 +56,7 @@ curl -X POST "https://api.rewritetoday.com/v1/messages/batch" \
   -H "Idempotency-Key: msg:batch:campaign-42" \
   -d '[
     {
-      "to": "+5511999999999",
+      "contact": "123",
       "content": "Rewrite: seu codigo e 478201"
     },
     {
@@ -68,3 +74,4 @@ curl -X POST "https://api.rewritetoday.com/v1/messages/batch" \
 - Route exhausted retries to dead-letter handling.
 - Treat `message.batch` as a summary event only; individual message events still matter.
 - If every batch item fails, no `message.batch` event is emitted.
+- Do not assume Rewrite will broadcast directly from a segment ID; your app must fan out the segment contacts into `/messages` or `/messages/batch`.

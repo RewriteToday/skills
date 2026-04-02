@@ -18,7 +18,7 @@ Build an application-owned SMS agent on top of Rewrite under strict safety contr
 ## Mandatory Pipeline
 
 1. Ingest a normalized Rewrite webhook event or an application-authenticated conversation event.
-2. Resolve user, workflow, and conversation state from your application data.
+2. Resolve user, workflow, conversation state, and any Rewrite `contactId` linkage from your application data.
 3. Classify intent, risk level, and requested action.
 4. Run the policy gate: allow, deny, escalate, or require confirmation.
 5. Execute only allowlisted tools or internal actions.
@@ -41,4 +41,5 @@ Build an application-owned SMS agent on top of Rewrite under strict safety contr
 - Rate limiting per sender and per tenant.
 - Red-team prompts in automated tests.
 - Human escalation for high-risk or low-confidence requests.
+- Explicit separation between Rewrite transport identifiers such as `contactId` and your app's canonical user identity.
 - Explicit documentation that Rewrite is the transport and event layer, while inbox state and policy live in your app.
