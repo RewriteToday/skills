@@ -36,6 +36,18 @@ Implement outbound SMS against the current public Rewrite API contract.
 - Treat `400`, `401`, and commercial `403` blocks as non-retryable until fixed.
 - Do not require `message.delivered` for critical workflows; it is still WIP in the public docs.
 
+## Quick Example
+
+Single SMS send via REST:
+
+```bash
+curl -X POST https://api.rewrite.com/messages \
+  -H "Authorization: Bearer $REWRITE_API_KEY" \
+  -H "Idempotency-Key: $(uuidgen)" \
+  -H "Content-Type: application/json" \
+  -d '{"to": "+5511999999999", "content": "Your code is 4821"}'
+```
+
 ## Resource Map
 
 - Install, SDK selection, CLI, and ecosystem packages: `references/installation.md`
@@ -48,12 +60,15 @@ Implement outbound SMS against the current public Rewrite API contract.
 
 ## Output Contract
 
-Persist or return:
+Persist or return the accepted response. Expected shape:
 
-- Rewrite message ID
-- acceptance timestamp
-- current known status
-- request target reference: `to` or `contact`
-- message analysis: encoding, characters, segment count
-- applied idempotency key
-- business tags or correlation identifiers
+```json
+{
+  "id": "msg_abc123",
+  "status": "accepted",
+  "to": "+5511999999999",
+  "createdAt": "2026-04-06T12:00:00Z",
+  "analysis": { "encoding": "GSM-7", "characters": 22, "segments": 1 },
+  "idempotencyKey": "550e8400-e29b-41d4-a716-446655440000",
+  "tags": []
+}
