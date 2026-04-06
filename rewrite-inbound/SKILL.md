@@ -28,6 +28,18 @@ Implement Rewrite webhook ingestion with security and reliability controls.
 - Treat Rewrite `contactId` as transport metadata that helps correlation, not as your app's canonical user identity.
 - Do not model this as end-user inbound SMS unless your application provides that layer itself.
 
+## Signature Verification (Inline Example)
+
+```typescript
+import { Webhook } from "svix";
+
+const wh = new Webhook(process.env.REWRITE_WEBHOOK_SECRET!);
+const headers = { "svix-id": req.headers["svix-id"], "svix-timestamp": req.headers["svix-timestamp"], "svix-signature": req.headers["svix-signature"] };
+const payload = wh.verify(rawBody, headers); // throws on invalid signature
+```
+
+Always pass the **raw request body** (Buffer/string before JSON parsing) to `verify`.
+
 ## Resource Map
 
 - SDK and package setup: `references/installation.md`
@@ -39,14 +51,18 @@ Implement Rewrite webhook ingestion with security and reliability controls.
 
 ## Output Contract
 
-Produce a normalized object with:
+Produce a normalized object matching this shape:
 
-- webhook event ID
-- event type
-- Rewrite message ID or batch ID
-- project ID
-- Rewrite `contact` and `contactId`, when present
-- current message status, when applicable
-- acceptance or delivery timestamps, when applicable
-- raw payload storage location
-- tenant or application correlation context
+```json
+{
+  "webhookEventId": "msg_2xRL...",
+  "eventType": "message.delivered",
+  "rewriteMessageId": "re_9kFm...",
+  "projectId": "proj_abc123",
+  "contact": { "address": "+15551234567", "contactId": "ct_xyz" },
+  "status": "delivered",
+  "deliveredAt": "2026-04-06T14:32:00Z",
+  "rawPayloadRef": "s3://webhooks/msg_2xRL.json",
+  "tenantContext": { "orgId": "org_42" }
+}
+```

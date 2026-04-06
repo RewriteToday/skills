@@ -69,6 +69,15 @@ If the task is implementation-heavy, pair this skill with:
 - Treat `403 PROJECT_SUBSCRIPTION_REQUIRED` and `PROJECT_BILLING_PAYMENT_REQUIRED` as operational or billing blocks.
 - Respect `X-RateLimit-Retry-After`; the current platform returns it in milliseconds.
 
+### Retry Workflow
+
+1. **Check status** — only retry `429` or `5xx` responses.
+2. **Read header** — parse `X-RateLimit-Retry-After` (ms) from the response.
+3. **Wait** — use the header value, or exponential backoff (1 s, 2 s, 4 s) if absent.
+4. **Retry** — resend with the same `Idempotency-Key`.
+5. **Validate** — confirm `2xx`; stop after 3 failed attempts.
+6. **Escalate** — log message ID + error code, alert ops or dead-letter the job.
+
 ## Webhooks
 
 - Verify signatures with the raw body and `svix-id`, `svix-timestamp`, `svix-signature`.
@@ -77,6 +86,21 @@ If the task is implementation-heavy, pair this skill with:
 - Deduplicate by webhook event ID.
 - Keep downstream writes idempotent.
 - Use delivery logs when debugging retries, malformed responses, or missing events.
+
+### Signature Verification Example
+
+```ts
+import { Webhook } from "svix";
+
+export function verifyWebhook(rawBody: string, headers: Record<string, string>) {
+  const wh = new Webhook(process.env.REWRITE_WEBHOOK_SECRET!);
+  return wh.verify(rawBody, {
+    "svix-id": headers["svix-id"],
+    "svix-timestamp": headers["svix-timestamp"],
+    "svix-signature": headers["svix-signature"],
+  });
+}
+```
 
 ## Observability
 
@@ -109,12 +133,4 @@ Persist or emit at minimum:
 
 ## Review Checklist
 
-When using this skill, produce recommendations grouped by:
-
-- content and deliverability risks
-- reliability and retry policy
-- webhook and event-processing safety
-- observability gaps
-- rollout or scaling risks
-
-Keep the output practical. Prefer concrete guardrails and tradeoffs over generic SMS advice.
+When using this skill, produce recommendations grouped by: content and deliverability risks, reliability and retry policy, webhook and event-processing safety, observability gaps, and rollout or scaling risks. Prefer concrete guardrails and tradeoffs over generic SMS advice.
