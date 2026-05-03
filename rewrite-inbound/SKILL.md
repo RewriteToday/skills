@@ -51,18 +51,33 @@ Always pass the **raw request body** (Buffer/string before JSON parsing) to `ver
 
 ## Output Contract
 
-Produce a normalized object matching this shape:
+Produce a normalized object matching `references/payload-contract.md`:
 
 ```json
 {
-  "webhookEventId": "msg_2xRL...",
-  "eventType": "message.delivered",
-  "rewriteMessageId": "re_9kFm...",
-  "projectId": "proj_abc123",
-  "contact": { "address": "+15551234567", "contactId": "ct_xyz" },
-  "status": "delivered",
-  "deliveredAt": "2026-04-06T14:32:00Z",
-  "rawPayloadRef": "s3://webhooks/msg_2xRL.json",
-  "tenantContext": { "orgId": "org_42" }
+  "eventId": "748395130237498900",
+  "eventType": "message.sent",
+  "createdAt": "2026-03-19T18:42:11.000Z",
+  "projectId": "748395130237498412",
+  "messageId": "748395130237498500",
+  "batchId": null,
+  "status": "SENT",
+  "to": "+5511999999999",
+  "contact": "Ada",
+  "contactId": "748395130237498455",
+  "tags": [
+    { "name": "flow", "value": "login" }
+  ],
+  "analysis": {
+    "encoding": "gsm7",
+    "characters": 41,
+    "segments": {
+      "count": 1,
+      "single": 160,
+      "concat": 153,
+      "reason": "fits"
+    }
+  },
+  "raw": {}
 }
 ```

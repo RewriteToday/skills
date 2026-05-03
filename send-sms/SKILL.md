@@ -41,7 +41,7 @@ Implement outbound SMS against the current public Rewrite API contract.
 Single SMS send via REST:
 
 ```bash
-curl -X POST https://api.rewrite.com/messages \
+curl -X POST https://api.rewritetoday.com/v1/messages \
   -H "Authorization: Bearer $REWRITE_API_KEY" \
   -H "Idempotency-Key: $(uuidgen)" \
   -H "Content-Type: application/json" \
