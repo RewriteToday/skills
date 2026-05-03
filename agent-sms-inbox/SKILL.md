@@ -19,7 +19,7 @@ Build an application-owned SMS agent on top of Rewrite under strict safety contr
 ## Mandatory Pipeline
 
 1. **Ingest** a normalized Rewrite webhook event or application-authenticated conversation event.
-   - *Checkpoint:* Validate payload against the normalized webhook contract in `../rewrite-inbound/references/payload-contract.md`, optionally using `@rewritetoday/types` or `@rewritetoday/zod` from `references/installation.md`. Reject malformed events before any processing.
+   - *Checkpoint:* Validate incoming webhook payloads against the official contract in `../rewrite-inbound/references/payload-contract.md`, then normalize into your app's internal schema as needed. Use `@rewritetoday/types` or `@rewritetoday/zod` from `references/installation.md` when helpful. Reject malformed events before any processing.
 2. **Resolve** user identity, conversation state, workflow context, and any Rewrite `contactId` linkage from your application data.
 3. **Classify** intent, risk level (1–4), and requested action (see `references/security-levels.md`).
 4. **Policy gate** — evaluate allow / deny / escalate / confirm:
@@ -48,7 +48,7 @@ if (decision === "deny") throw new PolicyDeniedError(requestedAction);
 ## Security Resources
 
 - SDK/package setup and product boundary: `references/installation.md`
-- Normalized Rewrite webhook contract: `../rewrite-inbound/references/payload-contract.md`
+- Official Rewrite webhook contract: `../rewrite-inbound/references/payload-contract.md`
 - Threat model and attack patterns: `references/threat-model.md`
 - Risk levels and policy matrix: `references/security-levels.md`
 - Safe action design: `references/safe-actions.md`

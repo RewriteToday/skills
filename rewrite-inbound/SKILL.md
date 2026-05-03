@@ -44,40 +44,49 @@ Always pass the **raw request body** (Buffer/string before JSON parsing) to `ver
 
 - SDK and package setup: `references/installation.md`
 - Signature verification patterns: `references/webhook-verification.md`
-- Webhook event envelope and normalization contract: `references/payload-contract.md`
+- Official webhook event envelope and payload shapes: `references/payload-contract.md`
 - Intake and retry-safe processing patterns: `references/inbound-processing-patterns.md`
 - Event routing and downstream actions: `references/reply-routing.md`
 - Delivery log inspection: `references/delivery-logs.md`
 
 ## Output Contract
 
-Produce a normalized object matching `references/payload-contract.md`:
+Expect the official Rewrite webhook delivery envelope documented in `references/payload-contract.md`:
 
 ```json
 {
-  "eventId": "748395130237498900",
-  "eventType": "message.sent",
-  "createdAt": "2026-03-19T18:42:11.000Z",
-  "projectId": "748395130237498412",
-  "messageId": "748395130237498500",
-  "batchId": null,
-  "status": "SENT",
-  "to": "+5511999999999",
-  "contact": "Ada",
-  "contactId": "748395130237498455",
-  "tags": [
-    { "name": "flow", "value": "login" }
-  ],
-  "analysis": {
-    "encoding": "gsm7",
-    "characters": 41,
-    "segments": {
-      "count": 1,
-      "single": 160,
-      "concat": 153,
-      "reason": "fits"
-    }
-  },
-  "raw": {}
+  "id": "748395130237498911",
+  "createdAt": "2026-03-19T18:42:13.000Z",
+  "type": "message.sent",
+  "data": {
+    "id": "748395130237498500",
+    "projectId": "748395130237498412",
+    "contact": "Fernanda",
+    "contactId": "748395130237498515",
+    "to": "+5511999999999",
+    "tags": [
+      { "name": "use_case", "value": "otp_login" }
+    ],
+    "type": "SMS",
+    "status": "SENT",
+    "content": "Rewrite: your verification code is 123456",
+    "country": "br",
+    "analysis": {
+      "characters": 41,
+      "encoding": "gsm7",
+      "segments": {
+        "concat": 153,
+        "count": 1,
+        "reason": "fits",
+        "single": 160
+      }
+    },
+    "error": null,
+    "deliveredAt": null,
+    "scheduledAt": null,
+    "templateId": null
+  }
 }
 ```
+
+If your app needs a normalized internal schema, derive it from this envelope after signature verification and raw payload persistence.
