@@ -14,20 +14,29 @@ Use this skill as the entry point for Rewrite work and route to the focused sub-
 - Use `rewrite-inbound/` for Rewrite webhook ingestion into your app: signature verification, event parsing, dedupe, retries, delivery logs, and downstream routing.
 - Use `agent-sms-inbox/` for application-owned SMS agents that consume Rewrite events and send replies through Rewrite under strict policy controls.
 
+## Quick Start
+
+Send a single SMS via `POST /messages`:
+
+```bash
+curl -X POST https://api.rewritetoday.com/v1/messages \
+  -H "Authorization: Bearer rw_YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: $(uuidgen)" \
+  -d '{"to": "+5511999999999", "content": "Hello from Rewrite!"}'
+```
+
+A `202` response means the message is queued; final delivery state arrives asynchronously via webhooks.
+
 ## Platform Reality Check
 
-- Public Rewrite API v1 base URL: `https://api.rewritetoday.com/v1`
-- Auth: `Authorization: Bearer rw_...`
-- Project-scoped audience resources live at `/contacts` and `/segments`.
 - `POST /messages` and `POST /messages/batch` accept either `to` or `contact` as the target.
-- `contact` resolves by contact ID or exact project-local name.
-- Sending to raw `to` also ensures a project contact record exists for that phone number.
-- Segments are reusable audiences, not a direct send endpoint; list `/segments/:id/contacts` first, then call `/messages` or `/messages/batch`.
-- Public sends currently target Brazilian `+55` numbers unless the project has international sending enabled.
+- `contact` resolves by contact ID or exact project-local name; sending to raw `to` also ensures a project contact record exists.
+- Segments are reusable audiences, not a direct send endpoint; list `/segments/:id/contacts` first, then send.
+- Public sends target Brazilian `+55` numbers unless the project has international sending enabled.
 - Inline sends use `content`; template sends use `templateId` plus `variables`.
-- Write operations should carry `Idempotency-Key`.
-- Delivery state is asynchronous and arrives via webhooks; `message.delivered` is currently WIP.
-- Cursor pagination uses top-level `cursor.persist`, `cursor.next`, and `cursor.prev`.
+- `message.delivered` webhook event is currently WIP.
+- Cursor pagination uses `cursor.persist`, `cursor.next`, and `cursor.prev`.
 
 ## Official Rewrite Stack
 
@@ -44,6 +53,6 @@ Use this skill as the entry point for Rewrite work and route to the focused sub-
 
 1. Prefer official SDKs for product code; drop to `@rewritetoday/rest` only when runtime control matters.
 2. Pair transport with `@rewritetoday/types` or `@rewritetoday/zod` when you need compile-time or runtime validation.
-3. Register webhooks early; do not block business logic on the initial send response.
-4. Model reusable recipients with Rewrite contacts and segments instead of hardcoding campaign target lists in send code.
-5. Treat quota, rate limits, billing blocks, and webhook retries as first-class production concerns.
+3. Register webhooks early; do not block business logic on the initial send response. Validate registration by confirming a `2xx` from `POST /webhooks` and testing with a manual event before going live.
+4. Model reusable recipients with Rewrite contacts and segments instead of hardcoding campaign target lists in send code. Validate a segment by calling `GET /segments/:id/contacts` and confirming it returns the expected members before using it in a batch send.
+5. Treat quota, rate limits, billing blocks, and webhook retries as first-class production concerns. Retry only `429` and transient `5xx`; treat `400`, `401`, and `403` as non-retryable.

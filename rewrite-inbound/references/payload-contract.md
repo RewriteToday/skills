@@ -43,6 +43,85 @@ For `sms.otp`, `message.sent`, `message.queued`, `message.failed`, `message.canc
 - `templateId`
 - `otp` only on `sms.otp`
 
+### Example: `message.sent`
+
+```json
+{
+  "id": "748395130237498911",
+  "createdAt": "2026-03-19T18:42:13.000Z",
+  "type": "message.sent",
+  "data": {
+    "id": "748395130237498500",
+    "projectId": "748395130237498412",
+    "contact": "Fernanda",
+    "contactId": "748395130237498515",
+    "to": "+5511999999999",
+    "tags": [
+      { "name": "use_case", "value": "otp_login" }
+    ],
+    "type": "SMS",
+    "status": "SENT",
+    "content": "Rewrite: your verification code is 123456",
+    "country": "br",
+    "analysis": {
+      "characters": 41,
+      "encoding": "gsm7",
+      "segments": {
+        "concat": 153,
+        "count": 1,
+        "reason": "fits",
+        "single": 160
+      }
+    },
+    "error": null,
+    "deliveredAt": null,
+    "scheduledAt": null,
+    "templateId": null
+  }
+}
+```
+
+`contact` and `contactId` are optional transport metadata and may be absent when the event does not resolve to a stored Rewrite contact.
+
+### Example: `sms.otp`
+
+```json
+{
+  "id": "748395130237498910",
+  "createdAt": "2026-03-19T18:42:11.000Z",
+  "type": "sms.otp",
+  "data": {
+    "id": "748395130237498500",
+    "projectId": "748395130237498412",
+    "to": "+5511999999999",
+    "tags": [],
+    "type": "OTP",
+    "status": "SENT",
+    "content": "OTP prefix=\"Rewrite\" expiresIn=5 secure=true to=\"+5511999999999\"",
+    "country": "br",
+    "analysis": {
+      "characters": 64,
+      "encoding": "gsm7",
+      "segments": {
+        "concat": 153,
+        "count": 1,
+        "reason": "fits",
+        "single": 160
+      }
+    },
+    "error": null,
+    "deliveredAt": null,
+    "scheduledAt": null,
+    "templateId": null,
+    "otp": {
+      "prefix": "Rewrite",
+      "expiresIn": 5,
+      "expiresAt": "2026-03-19T18:47:11.000Z"
+    }
+  }
+}
+```
+
 ## Batch Event Shape
 
 For `message.batch`, `data` contains:
@@ -51,37 +130,23 @@ For `message.batch`, `data` contains:
 - `projectId`
 - `ids`: accepted message IDs that reached `SENT`
 
-## Suggested Internal Normalization
+### Example: `message.batch`
 
 ```json
 {
-  "eventId": "748395130237498900",
-  "eventType": "message.sent",
-  "createdAt": "2026-03-19T18:42:11.000Z",
-  "projectId": "748395130237498412",
-  "messageId": "748395130237498500",
-  "batchId": null,
-  "status": "SENT",
-  "to": "+5511999999999",
-  "contact": "Ada",
-  "contactId": "748395130237498455",
-  "tags": [
-    { "name": "flow", "value": "login" }
-  ],
-  "analysis": {
-    "encoding": "gsm7",
-    "characters": 41,
-    "segments": {
-      "count": 1,
-      "single": 160,
-      "concat": 153,
-      "reason": "fits"
-    }
-  },
-  "raw": {}
+  "id": "748395130237498912",
+  "createdAt": "2026-03-19T18:42:25.000Z",
+  "type": "message.batch",
+  "data": {
+    "id": "748395130237498700",
+    "projectId": "748395130237498412",
+    "ids": [
+      "748395130237498500",
+      "748395130237498501",
+      "748395130237498502"
+    ]
+  }
 }
 ```
 
-`contact` and `contactId` are nullable and help correlate delivery events with Rewrite audience records.
-
-Keep both normalized and raw payloads for troubleshooting, replay, and log correlation.
+Keep the raw webhook payload for signature verification, debugging, replay, and downstream normalization in your own application.
