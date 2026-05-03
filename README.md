@@ -21,9 +21,9 @@ Skills are specialized context packages that teach **AI agents** (such as **Curs
 
 These skills are primarily consumed by **IDEs** and **AI agents** that support local context ingestion.
 
-1. **Clone:** Clone this repository to your machine.<br/>
-2. **AI Context:** Add this skills folder to your editor/agent context.<br/>
-3. **CLI:** Also use the [Rewrite CLI](https://github.com/rewritetoday/cli) for operational flows, webhook forwarding, and local automation.
+**Clone:** Clone this repository to your machine.<br/>
+**AI Context:** Add this skills folder to your editor/agent context.<br/>
+**CLI:** Also use the [Rewrite CLI](https://github.com/rewritetoday/cli) for operational flows, webhook forwarding, and local automation.
 
 ## How to Use
 
@@ -34,17 +34,6 @@ The structure is organized by domain for easier discovery and execution:
 [**`send-sms/`**](./send-sms) — Outbound sending, contacts, segments, idempotency, templates, batching, and delivery lifecycle.<br/>
 [**`rewrite-inbound/`**](./rewrite-inbound) — Rewrite webhook intake, signature verification, payload normalization, and delivery-log debugging.<br/>
 [**`agent-sms-inbox/`**](./agent-sms-inbox) — Secure application-owned SMS agent patterns with anti prompt-injection policies.
-
-## Ecosystem
-
-[Rewrite CLI](https://github.com/rewritetoday/cli) — Command-line tooling for operations and automation.<br/>
-[Node SDK](https://github.com/rewritetoday/node) — JavaScript/TypeScript integration.<br/>
-[Go SDK](https://github.com/rewritetoday/golang) — Native integration for Go services.<br/>
-[REST API](https://github.com/rewritetoday/rest) — HTTP endpoint and contract reference.<br/>
-[Types](https://github.com/rewritetoday/types) — Shared contracts and route builders.<br/>
-[Zod](https://github.com/rewritetoday/zod) — Runtime validation for Rewrite payloads and webhooks.<br/>
-[Docs](https://docs.rewritetoday.com) — Official API, SDK, CLI, Webhooks, AI, and Ecosystem documentation.<br/>
-[Examples](https://github.com/rewritetoday/examples) — Official examples repository.
 
 Built to accelerate production-grade SMS integrations against the current public Rewrite platform.<br/>
 Truly open source.
